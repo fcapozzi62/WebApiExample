@@ -34,12 +34,16 @@ print("GET/remoteRemote")
 p = requests.get('http://localhost:5010/remoteRemoteGet', auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
 print(p.text)
 
+# Post request example
 print("POST/downconverterPost")
 data = {"id": 45, "name": "demoName", "parent_id": 15, "manufacturer_id": 211}
 url = 'http://localhost:5010/downconverterPost/'
-p = requests.post(url=url, data=data, timeout=2.5, auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
+p = requests.post(url=url, data=data, timeout=2.5, auth=HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
 print(p.text)
 
+# Same page, get request results in an html form to be compiled out by user
+p = requests.get(url=url, auth=HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
+print(p.text)
 
 
 
