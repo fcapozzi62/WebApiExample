@@ -1,11 +1,12 @@
 import flask
-from flask import request, make_response
+from flask import request, make_response, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 import sqlite3
+from wtforms import Form, IntegerField, StringField, validators
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__,template_folder='html')
 auth = HTTPBasicAuth()
 app.config["DEBUG"] = True
 
@@ -18,6 +19,21 @@ apikey = {
     "fabio": "abcd1234ffgghh",
     "massimo": "12345abcdffaa"
 }
+
+inroutegroups = [
+    {
+        "id": 5,
+        "name": "inroute_1_DINoS5G",
+        "network_id": 12,
+        "max_ctom_speed": 100,
+        "qos_mode": "none",
+        "bandwidth_group_i_ds": [1,2],
+        "carrier_i_ds": [21,36],
+        "timeplan": {"acq_aperture": 125.0, "guard_interval": 5.0},
+        "adaptive": {"allowed_dropout_fraction": -1, "default_igc_id": 3,       "update_interval": 100, "fixed_igc_id": -1},
+        "composition": {"id": 1, "name": "inroute_1_DINoS5G", "modcod_for_each_carrier": ["QPSK 3/4","QPSK 5/6"]}
+    }
+]
 
 remotes = [
     {
@@ -166,7 +182,7 @@ def carrierCarrierGet():
         results = "401 Not Authorized"
     return flask.jsonify(results)
 
-
+# Riscrittura della pagina utilizzando un accesso al database
 @app.route('/carrierCarrierGet1/',methods=['GET'])
 @auth.login_required()
 def carrierCarrierGet1():
@@ -181,6 +197,62 @@ def carrierCarrierGet1():
         conn.row_factory = dict_factory
         cur = conn.cursor()
         query = 'SELECT * FROM carriers WHERE carriers.id = ' + str(carrier_id) + ";"
+        carrier = cur.execute(query).fetchall()
+        results.append(carrier)
+    else:
+        results = '401 Not Authorized'
+    return flask.jsonify(results)
+
+
+### GET/remoteRemote ###
+@app.route('/remoteRemoteGet/', methods=['GET'])
+@auth.login_required
+def remoteRemoteGet():
+    key = request.cookies.get("Session")
+    usr = auth.current_user()
+    lkey = apikey.get(usr)
+    if key == lkey :
+        results = []
+        for remote in remotes:
+            results.append(remote)
+    else:
+        results = "401 Not Authorized"
+    return flask.jsonify(results)
+
+
+### GET/inroutegroupInroutegroupId ###
+@app.route('/inroutegroupInroutegroupIdGet/', methods=['GET'])
+@auth.login_required
+def inroutegroupInroutegroupIdGet():
+    key = request.cookies.get("Session")
+    usr = auth.current_user()
+    lkey = apikey.get(usr)
+    if key == lkey :
+        if 'inroutegroup_id' in flask.request.args:
+            inroutegroup_id = int(flask.request.args['inroutegroup_id'])
+        results = []
+        for inroutegroup in inroutegroups:
+            if inroutegroup['id'] == inroutegroup_id:
+                results.append(inroutegroup)
+    else:
+        results = "401 Not Authorized"
+    return flask.jsonify(results)
+
+
+@app.route('/remoteRemoteIdGet1/', methods=['GET'])
+@auth.login_required
+def remoteRemoteIdGet1():
+    key = request.cookies.get("Session")
+    usr = auth.current_user()
+    lkey = apikey.get(usr)
+    if key == lkey :
+        if 'remote_id' in flask.request.args:
+            remote_id = int(flask.request.args['remote_id'])
+        results = []
+        conn = sqlite3.connect('./ivantage.db')
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
+        query = 'SELECT * FROM remotes WHERE remotes.id = ' + str(remote_id) + ";"
         carrier = cur.execute(query).fetchall()
         results.append(carrier)
     else:
@@ -223,6 +295,29 @@ def applicationservicegroupGet():
         res = "401 Authentication Error"
     return flask.jsonify(res)
 
+class downConverterForm(Form):
+    id = IntegerField('id', validators=[validators.DataRequired()])
+    name = StringField('name', validators=[validators.DataRequired()])
+    parent_id = IntegerField('parent_id', validators=[validators.DataRequired()])
+    manufacturer_id = IntegerField('manufacturer_id', validators=[validators.DataRequired()])
+
+@app.route('/downconverterPost/',methods = ['GET','POST'])
+@auth.login_required
+def downconverterPost():
+    form = downConverterForm(request.form)
+    if request.method == 'POST' and form.validate():
+        id = form.id.data
+        name = form.name.data
+        parent_id = form.parent_id.data
+        manufacturer_id = form.manufacturer_id.data
+        # aggiungere inserimento in db qui per il momento si stampa a video alcuni campi
+        result = "id = " + str(id) + '<br> name = ' + str(name) + \
+            "<br> parent_id = " + str(parent_id) + "<br> manufacturer_id = " + str(manufacturer_id)
+        return result
+    return render_template('downconverter.html', form=form)
+
+
+
 @app.route('/get-cookie/')
 def get_cookie():
     cookie = "Cookie = {}".format(request.cookies.get('Session'))
@@ -239,7 +334,6 @@ def logout():
 def loggedout():
     message = "User logged out !!"
     return message
-
 
 # with the host declaration it is possible to connect from any interface
 app.run(host='0.0.0.0', port=5010)

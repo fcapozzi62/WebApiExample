@@ -17,6 +17,22 @@ API_key = dict(Session = '12345abcdffaa')
 p = requests.get('http://localhost:5010/remoteRemoteIdGet?remote_id=1', auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
 print(p.text)
 
+API_key = dict(Session = '12345abcdffaa')
+print("GET/inrouteInroutegroupId?inroutegroup_id=5")
+p = requests.get('http://localhost:5010/inroutegroupInroutegroupIdGet?inroutegroup_id=5', auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
+print(p.text)
+
+print("GET/remoteRemoteId?remote_id=1")
+p = requests.get('http://localhost:5010/remoteRemoteIdGet?remote_id=1', auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
+print(p.text)
+
+print("GET/remoteRemoteId?remote_id=2")
+p = requests.get('http://localhost:5010/remoteRemoteIdGet?remote_id=2', auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
+print(p.text)
+
+print("GET/remoteRemote")
+p = requests.get('http://localhost:5010/remoteRemoteGet', auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
+print(p.text)
 
 
 
