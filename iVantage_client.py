@@ -34,5 +34,12 @@ print("GET/remoteRemote")
 p = requests.get('http://localhost:5010/remoteRemoteGet', auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
 print(p.text)
 
+print("POST/downconverterPost")
+data = {"id": 45, "name": "demoName", "parent_id": 15, "manufacturer_id": 211}
+url = 'http://localhost:5010/downconverterPost/'
+p = requests.post(url=url, data=data, timeout=2.5, auth= HTTPBasicAuth('massimo', 'bye'), cookies=API_key)
+print(p.text)
+
+
 
 
