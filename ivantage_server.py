@@ -31,7 +31,7 @@ inroutegroups = [
         "carrier_i_ds": [21,36],
         "timeplan": {"acq_aperture": 125.0, "guard_interval": 5.0},
         "adaptive": {"allowed_dropout_fraction": -1, "group_A_id": 3,       "update_interval": 100, "fixed_igc_id": -1},
-        "composition": {"id": 1, "name": "inroute_1_DINoS5G", "modcod_for_each_carrier": ["QPSK 3/4","QPSK 5/6"]}
+        "composition": {"id": 1, "name": "group_A_id", "modcod_for_each_carrier": ["QPSK 3/4","QPSK 5/6"]}
     }
 ]
 
