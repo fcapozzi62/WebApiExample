@@ -23,7 +23,7 @@ apikey = {
 inroutegroups = [
     {
         "id": 5,
-        "name": "inroute_1_DINoS5G",
+        "name": "group_A",
         "network_id": 12,
         "max_ctom_speed": 100,
         "qos_mode": "none",
